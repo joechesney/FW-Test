@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>FreightWise Programming Test</title>
+
+    <script>
+        'use strict';
+
+        /**
+         * Software Developer test.
+         *
+         * Doing research and making API calls are an important part of what we do at FreightWise.  This test will
+         * demonstrate your abilities to:
+         *
+         * - Make an API call
+         * - Research an API
+         * - Do basic DOM manipulation
+         * - Parse data
+         * - Handle errors
+         * - Be creative
+         *
+         * Feel free to ask any questions you may have.  Use a lot of comments, and explain why you are doing things.
+         * Don't spend more than 1-2 hours on it - we aren't expecting a finished product, but it should work and look
+         * nice.  Feel free to use any third party libraries, and if you do so, explain why you used them instead of
+         * built in browser APIs.
+         *
+         * Instructions:
+         * - Use the axios (https://github.com/axios/axios) request library to make an API call to the OpenWeatherMap
+         *   API for Current Weather Data using this API key:  25e989bd41e3e24ce13173d8126e0fd6
+         *   We've already imported this library to get you started.
+         * - Use either async/await or Promises.
+         * - Get the weather for Brentwood, TN, and write it to the DOM using the `setResults` method below.  Be
+         *   creative and make it look nice.
+         * - Handle errors and use the `setError` method below to display the error.  Also make it look nice.
+         * - If you find any mistakes in the test, fix them, and leave a comment about what you fixed and why.
+         * - Make sure your code is readable and maintainable.
+         * - Use plenty of descriptive comments.
+         * - Make sure your code runs in the latest version of Google Chrome and Firefox (ES6 is allowed).
+         * - Make your code live (GitHub with GitHub pages works nice).
+         * - Send a link to your finished test to hr+software@freightwisellc.com.
+         *
+         * If you have time, pick one of these:
+         * - Sign up for NewsAPI.org and get the Top Headlines and show them along with the weather.
+         * - Use the browser location API to get the user's current location, and show that location's weather.
+         * - Show a satellite map of the weather in Brentwood.
+         * - Request a user's phone number and send them an SMS with the weather.
+         */
+
+        
+        class Test {
+            constructor() {
+                // Joe: This line was missing the array index selector of [0],
+                // because '.getElementsByClassName' returns an array
+                this.testResults = document.getElementsByClassName('test-results')[0];
+                this.headerContainer = document.getElementsByClassName('header-container')[0];
+                this.errorContainer = document.getElementsByClassName('error-container')[0];
+            }
+
+            async run() {
+                // Joe: I'm using async/await with try catch here because I'm more familiar with it's syntax, 
+                // and I personally prefer it over the Promise.then style
+                // Joe: I added the query 'units=imperial' to get data back in imperial US units
+                try {
+                    const response = await axios
+                    .get(`http://api.openweathermap.org/data/2.5/weather?zip=37207,us&units=imperial&appid=25e989bd41e3e24ce13173d8126e0fd6`);
+                    this.setResults(response.data);
+                } catch(err) {
+                    // Joe: the 'response' property of the err object must be accessed in order to view the 
+                    // the error's object structure, otherwise javascript will attempt to console.log a string
+                    // representation of the the err object instead of the whole object itself.
+                    this.setError(err.response.data.message);
+                }
+            }
+
+            setError(message) {
+                this.errorContainer.innerHTML = `
+                <section class="hero is-danger">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                ${message}
+                            </h1>
+                        </div>
+                    </div>
+                </section>`;
+            }
+
+            setResults(results) {
+                this.headerContainer.innerHTML = `
+                <section class="hero is-dark">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                Weather at ${new Date().toLocaleString()}
+                            </h1>
+                        </div>
+                    </div>
+                </section>`;
+                this.testResults.innerHTML = `
+                <div class="tile is-ancestor">
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification box is-primary">
+                        <p class="title">${results.main.temp}&deg; F</p>
+                        <p class="subtitle">Current temp.</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification box is-warning">
+                        <p class="title">${results.main.humidity}%</p>
+                        <p class="subtitle">Humidity</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification box is-info">
+                        <p class="title">${results.wind.speed}<span class="mph">mph</span> ${this.getDirectionFromWindDegree(results.wind.deg)}</p>
+                        <p class="subtitle">Wind</p>
+                        </article>
+                    </div>
+                </div>
+            `;
+            }
+
+            getDirectionFromWindDegree(deg) {
+                if (deg>11.25 && deg<33.75){
+                    return "NNE";
+                }else if (deg>33.75 && deg<56.25){
+                    return "ENE";
+                }else if (deg>56.25 && deg<78.75){
+                    return "E";
+                }else if (deg>78.75 && deg<101.25){
+                    return "ESE";
+                }else if (deg>101.25 && deg<123.75){
+                    return "ESE";
+                }else if (deg>123.75 && deg<146.25){
+                    return "SE";
+                }else if (deg>146.25 && deg<168.75){
+                    return "SSE";
+                }else if (deg>168.75 && deg<191.25){
+                    return "S";
+                }else if (deg>191.25 && deg<213.75){
+                    return "SSW";
+                }else if (deg>213.75 && deg<236.25){
+                    return "SW";
+                }else if (deg>236.25 && deg<258.75){
+                    return "WSW";
+                }else if (deg>258.75 && deg<281.25){
+                    return "W";
+                }else if (deg>281.25 && deg<303.75){
+                    return "WNW";
+                }else if (deg>303.75 && deg<326.25){
+                    return "NW";
+                }else if (deg>326.25 && deg<348.75){
+                    return "NNW";
+                }else{
+                    return "N"; 
+                }
+            }
+        }
+    </script>
+
+    <style>
+        
+        /* Joe: I actually added this in because Bulma removes it */
+        .page-container {
+            margin: 1em;
+        }
+        /* Joe: This is just for the letters 'mph' so that they're smaller */
+        .mph {
+            font-size: 14px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 1em;
+        }
+        /* Joe: I removed all the button styling and used Bulma styling */
+    </style>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Joe: I am using the Bulma css framework for styling -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Joe: I moved the button above the results element, so that the button stays in place when results are displayed -->
+        <div class="button-container"></div>
+        <div class="header-container"></div>
+        <div class="error-container"></div>
+        <div class="test-results tile is-parent"></div>
+    </div>
+
+    <script>
+        'use strict';
+
+        /**
+         * Creates a button for kicking off the test and adds it to the DOM.
+         * @param {HTMLElement} context  the parent element to add the button to
+         * @param {Test}        test     the test to be executed
+         * @returns {HTMLElement} the button added to the test
+         */
+        function addButtonForTest(context, test) {
+            let testButton = document.createElement('button');
+
+            testButton.type = 'button';
+            testButton.innerText = 'Get the Nashville Weather';
+            testButton.classList.add('button');
+            testButton.classList.add('is-success');
+            testButton.onclick = () => test.run();
+
+            context.appendChild(testButton);
+
+            return testButton;
+        }
+
+        // Create the Test and add a button to the UI for running the test
+        const test = new Test();
+        const buttonContainer = document.getElementsByClassName('button-container')[0];
+
+        addButtonForTest(buttonContainer, test);
+    </script>
+</body>
+</html>
