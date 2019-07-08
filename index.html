@@ -65,7 +65,7 @@
                 // Joe: I added the query 'units=imperial' to get data back in imperial US units
                 try {
                     const response = await axios
-                    .get(`http://api.openweathermap.org/data/2.5/weather?zip=37207,us&units=imperial&appid=25e989bd41e3e24ce13173d8126e0fd6`);
+                    .get(`https://api.openweathermap.org/data/2.5/weather?zip=37207,us&units=imperial&appid=25e989bd41e3e24ce13173d8126e0fd6`);
                     this.setResults(response.data);
                 } catch(err) {
                     // Joe: the 'response' property of the err object must be accessed in order to view the 
